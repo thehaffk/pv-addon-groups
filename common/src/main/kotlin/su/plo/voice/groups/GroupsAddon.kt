@@ -1,5 +1,6 @@
 package su.plo.voice.groups
 
+import com.google.common.collect.Sets
 import com.google.inject.Inject
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -102,7 +103,7 @@ abstract class GroupsAddon : AddonInitializer {
                         name,
                         password,
                         persistent,
-                        playersIds,
+                        Sets.newConcurrentHashSet(playersIds),
                         owner
                     )
                 }
