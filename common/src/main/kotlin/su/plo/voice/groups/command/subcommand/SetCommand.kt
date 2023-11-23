@@ -1,7 +1,7 @@
 package su.plo.voice.groups.command.subcommand
 
-import su.plo.lib.api.server.command.MinecraftCommandSource
-import su.plo.lib.api.server.permission.PermissionDefault
+import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.permission.PermissionDefault
 import su.plo.voice.groups.command.CommandHandler
 import su.plo.voice.groups.command.SubCommand
 import su.plo.voice.groups.utils.extend.*
@@ -16,7 +16,7 @@ class SetCommand(handler: CommandHandler): SubCommand(handler) {
         "set.all" to PermissionDefault.OP,
     )
 
-    override fun suggest(source: MinecraftCommandSource, arguments: Array<out String>): List<String> {
+    override fun suggest(source: McCommandSource, arguments: Array<String>): List<String> {
 
         val flagName = arguments.getOrNull(1) ?: return listOf()
 
@@ -35,11 +35,11 @@ class SetCommand(handler: CommandHandler): SubCommand(handler) {
         }
     }
 
-    override fun execute(source: MinecraftCommandSource, arguments: Array<out String>) {
+    override fun execute(source: McCommandSource, arguments: Array<String>) {
 
         val player = source.getVoicePlayer(handler.voiceServer) ?: return source.playerOnlyCommandError()
         val group = handler.groupManager.groupByPlayer[player.instance.uuid] ?: return source.notInGroupError()
-        val isOwner = group.owner?.id == player.instance.uuid
+        val isOwner = group.isOwner(player)
 
         when {
             source.hasAddonPermission("set.all") -> Unit
@@ -148,12 +148,12 @@ class SetCommand(handler: CommandHandler): SubCommand(handler) {
         }
     }
 
-    override fun checkCanExecute(source: MinecraftCommandSource): Boolean {
+    override fun checkCanExecute(source: McCommandSource): Boolean {
 
         val player = source.getVoicePlayer(handler.voiceServer) ?: return false
         val group = handler.groupManager.groupByPlayer[player.instance.uuid] ?: return false
 
-        val isOwner = group.owner?.id == player.instance.uuid
+        val isOwner = group.isOwner(player)
 
         return when {
             source.hasAddonPermission("set.owner") && isOwner -> true

@@ -5,6 +5,7 @@ import su.plo.voice.api.event.EventSubscribe
 import su.plo.voice.api.server.PlasmoBaseVoiceServer
 import su.plo.voice.api.server.audio.capture.SelfActivationInfo
 import su.plo.voice.api.server.audio.capture.ServerActivation
+import su.plo.voice.api.server.audio.source.ServerBroadcastSource
 import su.plo.voice.api.server.audio.source.ServerDirectSource
 import su.plo.voice.api.server.event.audio.source.ServerSourcePacketEvent
 import su.plo.voice.api.server.player.VoicePlayer
@@ -50,7 +51,7 @@ class ActivationListener(
     @EventSubscribe(priority = EventPriority.HIGHEST)
     fun onSourceSendPacket(event: ServerSourcePacketEvent) {
         val source = event.source as? ServerDirectSource ?: return
-        val sender = source.sender.orElse(null) ?: return
+        val sender = source.sender ?: return
 
         if (!selfActivationInfo.lastPlayerActivationIds
                 .containsKey(sender.instance.uuid)
@@ -71,7 +72,7 @@ class ActivationListener(
 
     private fun sendAudioPacket(
         player: VoicePlayer,
-        source: ServerDirectSource,
+        source: ServerBroadcastSource,
         packet: PlayerAudioPacket
     ): Boolean {
         val sourcePacket = SourceAudioPacket(
@@ -87,7 +88,7 @@ class ActivationListener(
     }
 
     private fun sendAudioEndPacket(
-        source: ServerDirectSource,
+        source: ServerBroadcastSource,
         packet: PlayerAudioEndPacket
     ): Boolean {
         val sourcePacket = SourceAudioEndPacket(source.id, packet.sequenceNumber)

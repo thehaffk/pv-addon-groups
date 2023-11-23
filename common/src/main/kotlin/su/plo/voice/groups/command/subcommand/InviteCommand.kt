@@ -1,7 +1,7 @@
 package su.plo.voice.groups.command.subcommand
 
-import su.plo.lib.api.server.command.MinecraftCommandSource
-import su.plo.lib.api.server.permission.PermissionDefault
+import su.plo.slib.api.command.McCommandSource
+import su.plo.slib.api.permission.PermissionDefault
 import su.plo.voice.groups.command.CommandHandler
 import su.plo.voice.groups.command.SubCommand
 import su.plo.voice.groups.utils.extend.*
@@ -16,7 +16,7 @@ class InviteCommand(handler: CommandHandler): SubCommand(handler) {
         "invite.*" to PermissionDefault.OP,
     )
 
-    override fun suggest(source: MinecraftCommandSource, arguments: Array<out String>): List<String> {
+    override fun suggest(source: McCommandSource, arguments: Array<String>): List<String> {
 
         if (arguments.size != 2) return listOf()
 
@@ -32,7 +32,7 @@ class InviteCommand(handler: CommandHandler): SubCommand(handler) {
             .filter { it.startsWith(arg, true) }
     }
 
-    override fun execute(source: MinecraftCommandSource, arguments: Array<out String>) {
+    override fun execute(source: McCommandSource, arguments: Array<String>) {
 
         val player = source.getVoicePlayer(handler.voiceServer) ?: run {
             source.playerOnlyCommandError()
@@ -44,7 +44,7 @@ class InviteCommand(handler: CommandHandler): SubCommand(handler) {
             return
         }
 
-        val isOwner = group.owner == player
+        val isOwner = group.isOwner(player)
 
         when {
             source.hasAddonPermission("invite.*") -> Unit
@@ -86,12 +86,12 @@ class InviteCommand(handler: CommandHandler): SubCommand(handler) {
         invitedPlayer.printDivider()
     }
 
-    override fun checkCanExecute(source: MinecraftCommandSource): Boolean {
+    override fun checkCanExecute(source: McCommandSource): Boolean {
 
         val player = source.getVoicePlayer(handler.voiceServer) ?: return false
         val group = handler.groupManager.groupByPlayer[player.instance.uuid] ?: return false
 
-        val isOwner = group.owner?.id == player.instance.uuid
+        val isOwner = group.isOwner(player)
 
         return when {
             source.hasAddonPermission("invite.owner") && isOwner -> true
