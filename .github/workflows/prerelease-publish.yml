@@ -27,7 +27,7 @@ jobs:
     - name: Generate entrypoints
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: jar:generateLoadersEntrypoints
+        arguments: generateTemplates jar:generateLoadersEntrypoints
 
     - name: Build
       uses: gradle/gradle-build-action@v2
