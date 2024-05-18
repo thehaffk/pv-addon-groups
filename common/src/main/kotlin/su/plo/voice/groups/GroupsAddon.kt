@@ -109,9 +109,7 @@ abstract class GroupsAddon : AddonInitializer {
                 groupManager.groupByPlayer[it.key] = group
             } }
 
-        voiceServer.eventBus.register(this, ActivationListener(
-            voiceServer, groupManager, activation
-        ))
+        voiceServer.eventBus.register(this, ActivationListener(groupManager, activation))
 
         voiceServer.eventBus.register(this, groupManager)
     }
