@@ -24,10 +24,15 @@ jobs:
           16
           17
 
-    - name: Build with Gradle
+    - name: Generate entrypoints
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: clean build
+        arguments: jar:generateLoadersEntrypoints
+
+    - name: Build
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: build
 
     - name: Publish to GitHub
       uses: Apehum/mc-publish@v1.1
