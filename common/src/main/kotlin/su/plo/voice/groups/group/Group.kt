@@ -92,7 +92,8 @@ class Group(
     }
 
     private fun notifyPlayers(text: McTextComponent) {
-        val component = McTextComponent.translatable("pv.addon.groups.format.group_name", name)
+        val component = McTextComponent.empty()
+            .append(McTextComponent.translatable("pv.addon.groups.format.group_name", name))
             .append(McTextComponent.literal(" "))
             .append(text)
         onlinePlayers.forEach { it.instance.sendMessage(component) }
