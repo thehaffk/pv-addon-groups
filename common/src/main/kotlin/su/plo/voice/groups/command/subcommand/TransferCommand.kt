@@ -78,7 +78,7 @@ class TransferCommand(handler: CommandHandler): SubCommand(handler) {
         }
 
         group.owner = newOwner.instance.gameProfile
-        group.owner?.let { group.notifyPlayersTranslatable("server.pv.addon.groups.notifications.new_owner", it.name) }
+        group.owner?.let { group.notifyPlayersTranslatable("pv.addon.groups.notifications.new_owner", it.name) }
 
 //        source.sendTranslatable("pv.addon.groups.command.leave.success", group.name)
     }
