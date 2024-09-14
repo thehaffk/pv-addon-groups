@@ -16,6 +16,7 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 abstract class GroupsAddon : AddonInitializer {
 
@@ -100,6 +101,7 @@ abstract class GroupsAddon : AddonInitializer {
                         password,
                         persistent,
                         Sets.newConcurrentHashSet(playersIds),
+                        CopyOnWriteArrayList(bannedPlayers),
                         owner
                     )
                 }
@@ -130,6 +132,9 @@ abstract class GroupsAddon : AddonInitializer {
             .addSubCommand(::UnsetCommand)
             .addSubCommand(::DeleteCommand)
             .addSubCommand(::TransferCommand)
+            .addSubCommand(::KickCommand)
+            .addSubCommand(::BanCommand)
+            .addSubCommand(::UnbanCommand)
     }
 
     @Throws(IOException::class)

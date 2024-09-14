@@ -14,6 +14,7 @@ import su.plo.voice.groups.utils.extend.getVoicePlayer
 import su.plo.voice.groups.utils.serializer.McGameProfileSerializer
 import su.plo.voice.groups.utils.serializer.UUIDSerializer
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 @Serializable
 open class GroupData(
@@ -23,6 +24,7 @@ open class GroupData(
     var password: String? = null,
     var persistent: Boolean = false,
     val playersIds: MutableSet<@Serializable(with = UUIDSerializer::class) UUID> = Sets.newConcurrentHashSet(),
+    val bannedPlayers: MutableList<@Serializable(with = McGameProfileSerializer::class) McGameProfile> = CopyOnWriteArrayList(),
     @Serializable(with = McGameProfileSerializer::class)
     var owner: McGameProfile? = null,
 )
@@ -34,10 +36,10 @@ class Group(
     password: String? = null,
     persistent: Boolean = false,
     playersIds: MutableSet<UUID> = Sets.newConcurrentHashSet(),
-    owner: McGameProfile? = null
-) : GroupData(id, name, password, persistent, playersIds, owner) {
+    bannedPlayers: MutableList<McGameProfile> = CopyOnWriteArrayList(),
+    owner: McGameProfile? = null,
+) : GroupData(id, name, password, persistent, playersIds, bannedPlayers, owner) {
 
-    val bannedPlayers: HashSet<@Serializable(with = UUIDSerializer::class) UUID> = HashSet()
     var permissionsFilter: HashSet<String> = HashSet()
 
     val onlinePlayers: Collection<VoicePlayer>
@@ -81,7 +83,14 @@ class Group(
     fun onPlayerQuit(playerUuid: UUID): Boolean =
         playerSet.removePlayer(playerUuid)
 
-    fun isBanned(playerUuid: UUID): Boolean = bannedPlayers.contains(playerUuid)
+    fun isBanned(playerUuid: UUID): Boolean = bannedPlayers.any { it.id == playerUuid }
+
+    fun banPlayer(player: VoicePlayer) {
+        bannedPlayers.add(player.instance.gameProfile)
+    }
+
+    fun unbanPlayer(player: McGameProfile) =
+        bannedPlayers.removeIf { it.id == player.id }
 
     fun isOwner(player: VoicePlayer): Boolean =
         owner?.id == player.instance.uuid

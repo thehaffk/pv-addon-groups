@@ -78,6 +78,11 @@ class InviteCommand(handler: CommandHandler): SubCommand(handler) {
                 return
             }}
 
+        if (group.isBanned(invitedPlayer.uuid)) {
+            source.sendTranslatable("pv.addon.groups.command.invite.error.banned")
+            return
+        }
+
         source.sendTranslatable("pv.addon.groups.command.invite.success", invitedPlayer.name)
 
         invitedPlayer.printDivider()

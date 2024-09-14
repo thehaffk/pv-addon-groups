@@ -3,6 +3,7 @@ package su.plo.voice.groups
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import su.plo.slib.api.entity.player.McGameProfile
 import su.plo.voice.api.event.EventSubscribe
 import su.plo.voice.api.server.PlasmoBaseVoiceServer
 import su.plo.voice.api.server.audio.capture.ServerActivation
@@ -13,6 +14,7 @@ import su.plo.voice.api.server.event.connection.UdpClientDisconnectedEvent
 import su.plo.voice.api.server.player.VoicePlayer
 import su.plo.voice.groups.group.Group
 import su.plo.voice.groups.group.GroupData
+import su.plo.voice.groups.utils.extend.sendTranslatable
 import su.plo.voice.groups.utils.serializer.UUIDSerializer
 import java.io.File
 import java.util.*
@@ -48,6 +50,28 @@ class GroupsManager(
         sourceByPlayer[player.instance.uuid] = source
     }
 
+    fun kick(group: Group, player: VoicePlayer) {
+        leave(player)
+        player.instance.sendTranslatable("pv.addon.groups.notifications.kicked")
+        group.notifyPlayersTranslatable("pv.addon.groups.notifications.player_kicked", player.instance.name)
+    }
+
+    fun ban(group: Group, player: VoicePlayer) {
+        val didLeft = leave(player)
+        group.banPlayer(player)
+
+        group.notifyPlayersTranslatable("pv.addon.groups.notifications.player_banned", player.instance.name)
+
+        if (didLeft) {
+            player.instance.sendTranslatable("pv.addon.groups.notifications.banned", group.inlineChatComponent())
+        }
+    }
+
+    fun unban(group: Group, player: McGameProfile) {
+        group.unbanPlayer(player)
+        group.notifyPlayersTranslatable("pv.addon.groups.notifications.player_unbanned", player.name)
+    }
+
     fun leave(player: VoicePlayer): Boolean =
         leave(player.instance.uuid)
 
@@ -65,7 +89,7 @@ class GroupsManager(
                 }
         }
 
-        if (didLeft == false) return false
+        if (didLeft != true) return false
 
         if (group?.persistent == false) {
             if (group.owner?.id == playerUuid) {
