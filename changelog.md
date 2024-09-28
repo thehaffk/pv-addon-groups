@@ -1,2 +1,2 @@
-- Update to Plasmo Voice 2.1.0. This version is not compatible with PV 2.0.x
-- Group management commands: /groups <kick/ban/unban>
+- Update to Plasmo Voice 2.1.0. This version is not compatible with PV 2.0.x.
+- Group management commands: /groups <kick/ban/unban>.
