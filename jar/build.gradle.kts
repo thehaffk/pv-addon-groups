@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     alias(libs.plugins.crowdin)
     id("su.plo.voice.plugin.entrypoints")
@@ -32,7 +34,7 @@ sourceSets {
 }
 
 crowdin {
-    projectId = "plasmo-voice-addons"
+    url = URI.create("https://github.com/plasmoapp/plasmo-voice-crowdin/archive/refs/heads/addons.zip").toURL()
     sourceFileName = "server/groups.toml"
     resourceDir = "groups/languages"
     createList = true

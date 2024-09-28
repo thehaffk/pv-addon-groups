@@ -15,6 +15,7 @@ import su.plo.voice.groups.group.Group
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.net.URI
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -44,7 +45,7 @@ abstract class GroupsAddon : AddonInitializer {
         val config = try {
 
             voiceServer.languages.register(
-                "plasmo-voice-addons",
+                URI.create("https://github.com/plasmoapp/plasmo-voice-crowdin/archive/refs/heads/addons.zip").toURL(),
                 "server/groups.toml",
                 { resourcePath ->
                     getLanguageResource(resourcePath) ?: throw IOException("Can't load language resource")
